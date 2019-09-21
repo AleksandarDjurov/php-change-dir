@@ -1,2 +1,30 @@
 # php-change-dir
 Write a function that provides change directory (cd) function for an abstract file system
+
+## Notes:
+```
+root path is '/'.
+path separator is '/'.
+parent directory is addressable as '..'.
+directory names consist only of English alphabet letters (A-Z and a-z).
+the function will not be passed any invalid paths.
+do not use built-in path-related functions.
+```
+
+## For example:
+```
+$path = new Path('/a/b/c/d');
+$path->cd('../x');
+echo $path->currentPath;
+should display '/a/b/c/x'.
+$path->cd('./x');
+should display '/a/b/c/d/x'.
+$path->cd('x');
+should display '/a/b/c/d/x'.
+$path->cd('/a');
+should display '/a'.
+$path->cd('../../e/../f');
+should display '/a/b/f'.
+$path->cd('/d/e/../a');
+should display '/d/a'.
+```
