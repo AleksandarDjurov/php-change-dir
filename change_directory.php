@@ -2,11 +2,11 @@
 class Path
 {
   public $current_path;
-  public $glob_count; // $path->cd('/d/e/../a');
+  public $glob_count;
 
   function __construct($path) {
     $this->current_path = $path;
-    $this->blob_count = 0;
+    $this->glob_count = 0;
   }
 
   public function cd($new_path , &$change_path) {
