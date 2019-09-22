@@ -2,42 +2,56 @@
 class Path
 {
   public $current_path;
+  public $glob_count; // $path->cd('/d/e/../a');
 
   function __construct($path) {
     $this->current_path = $path;
+    $this->blob_count = 0;
   }
 
-  public function cd($newPath) {
-    $innerCounter = 0;
-    $strOut= '';
-    $newPath = explode('/', $newPath);
-    $oldPath = explode('/', $this->current_path);
+  public function cd($new_path , &$change_path) {
+    $dirs = explode('/', $this->current_path);
+    $new_dirs = explode('/', $new_path);
+    $first_index = strstr($new_path, '/');
+    $first_pos = strpos($new_path, '/');
 
-    foreach ($newPath as $str) {
-      if ($str == '..') $innerCounter++;
-    }
+    if ($first_index && $first_pos === 0) {
+      $change_path = $new_path;
+    } else {
+      $new_path = [];
+      foreach ($new_dirs as $new_dir) {
+        if ($new_dir === '..') {
+          array_pop($dirs);
+        } else if ($new_dir === '.') {
+          // slience is gold
+        } else {
+          $second_dirs = $dirs;
+          array_push($second_dirs, $new_dir);
+          $dirs = $second_dirs;
+          $conv_path = implode('/', $second_dirs);
 
-    $oldLength = count($oldPath);
-    for ($i = 0; $i < $oldLength - $innerCounter; $i++) {
-      $strOut .= $oldPath[$i] . '/';
-    }
-
-    $newLength = count($newPath);
-    for ($i = 0; $i < $newLength; $i++) {
-      if ($newPath[$i] != '..') {
-        $strOut = $strOut . $newPath[$i] . '';
+          $this->cd($conv_path, $change_path);
+          $new_path[] = $new_dir;
+        }
       }
+      $new_path = array_merge($dirs, $new_path);
     }
-
-    $this->current_path = $strOut;
-    return $this;
   }
 }
 
 $path = new Path('/a/b/c/d');
-$argInput = '/d/e/../a';
+$change_path = '';
+$path->cd('../x', $change_path);
+echo $change_path . PHP_EOL;
 
-echo "/a/b/c/d\n";
-echo "TEST: " . $argInput . "\n";
-$path->cd($argInput);
-echo $path->current_path . "\n";
+$path->cd('./x', $change_path);
+echo $change_path . PHP_EOL;
+
+$path->cd('x', $change_path);
+echo $change_path . PHP_EOL;
+
+$path->cd('/a', $change_path);
+echo $change_path . PHP_EOL;
+
+$path->cd('../../e/../f', $change_path);
+echo $change_path . PHP_EOL;
